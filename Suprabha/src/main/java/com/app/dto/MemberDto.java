@@ -1,14 +1,12 @@
 package com.app.dto;
 
-import javax.validation.constraints.NotEmpty;
-
 public class MemberDto {
-@NotEmpty
+
 private String name;
 private String Email;
 private String password;
 private String address;
-public MemberDto(@NotEmpty String name, String email, String password, String address) {
+public MemberDto( String name, String email, String password, String address) {
 	super();
 	this.name = name;
 	Email = email;

@@ -7,5 +7,6 @@ public interface Constants {
 	Integer INITIAL_BOOK_OF_MEMBE =0;
 	Integer DEFAULT_MEMBER_STATUS=1;
 	Float INITIAL_FINE_FOR_MEMBER=0F;
+     String USER_ROLE="MEMBER";
 	
 }

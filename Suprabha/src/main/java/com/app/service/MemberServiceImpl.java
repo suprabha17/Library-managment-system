@@ -1,14 +1,16 @@
 package com.app.service;
-
-import javax.transaction.Transactional;
-
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
+
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
+import javax.websocket.Session;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.app.pojo.*;
+
+import com.app.Enums.Roles;
 import com.app.constant.Constants;
 import com.app.dao.IBookDao;
 import com.app.dao.IMemberBookDao;
@@ -16,6 +18,9 @@ import com.app.dao.IUserDao;
 import com.app.dto.MemberDto;
 import com.app.exception.DependanceyException;
 import com.app.exception.RecordNotFound;
+import com.app.pojo.Book;
+import com.app.pojo.BookIdMemberMapping;
+import com.app.pojo.User;
 
 
 @Service
@@ -24,6 +29,8 @@ public class MemberServiceImpl implements IMemberService {
 	@Autowired
 	   private IBookDao bdao;
 	   
+	@Autowired
+	private EntityManager manager;
 	   @Autowired
 	   private IMemberBookDao bmdao;
 	   
@@ -31,17 +38,19 @@ public class MemberServiceImpl implements IMemberService {
 	   private IUserDao mdao;
 	
 
-	@Override
-	public void addMemberDetails(MemberDto memberdto) {
+	@Override  
+	public User addMemberDetails(MemberDto memberdto) {
 		User user=new User();
 		user.setNumOfBooksPresent(Constants.INITIAL_BOOK_OF_MEMBE);
 		user.setFine(Constants.INITIAL_FINE_FOR_MEMBER);
-		user.setAddress(memberdto.getName());
+		user.setRole(Roles.MEMBER);
+		user.setName(memberdto.getName());
 		user.setEmail(memberdto.getEmail());
 		user.setAddress(memberdto.getAddress());
 		user.setPassword(memberdto.getPassword());
-        mdao.save(user); 
+		
         System.out.println("added successfuly");
+        return mdao.save(user);
 	}
 
 
@@ -123,7 +132,7 @@ public class MemberServiceImpl implements IMemberService {
 	}
 
 
-	@Override
+	@Override   
 	public void updateMemberAdd(Integer Id,String add) 
 	{
 		/*Consumer<Book>bookConsumer = book -> {
@@ -140,7 +149,7 @@ public class MemberServiceImpl implements IMemberService {
 	}
 
 
-	@Override
+	@Override   
 	public void updatePassword(String email, String pass) {
 		
 		            List<User> member=mdao.findByEmail(email);
@@ -156,6 +165,27 @@ public class MemberServiceImpl implements IMemberService {
 		bmdao.save(issueBook);
 		
 	}
+
+	
+
+	@Override
+	public List<Book> allBooks()  //working
+	{//Integer id, String title, @NotNull Integer availabilityCount, String author
+		String jpql="select new com.app.pojo.Book(id,title,availabilityCount,author) from com.app.pojo.Book b";
+		
+		return  manager.createQuery(jpql,Book.class).getResultList();
+		
+	}
+
+
+	@Override
+	public User validateUser(String email, String pwd) {
+		String jpql="select u from User u where u.email=:em and u.password=:pass";
+		return manager.createQuery(jpql, User.class).setParameter("em", email)
+				.setParameter("pass", pwd).getSingleResult();
+	}
+	
+	
 	
 	
 	

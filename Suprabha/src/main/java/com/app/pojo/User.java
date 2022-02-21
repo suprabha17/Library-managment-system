@@ -4,31 +4,36 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+
+import com.app.Enums.Roles;
 
 @Entity
 @Table(name = "user")
 public class User  {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
     @Column(name = "name",length = 30)
     private String name;
 
-//    @Column(name = "status")
-//    private Integer status;
+    @Column(name = "role")
+    @Enumerated
+    private Roles role;
 
     @Column(name = "created_at")
-    @CreatedDate
+    @UpdateTimestamp
     private Date createdAt;
 
     @Column(name = "updated_at")
@@ -51,7 +56,7 @@ public class User  {
     private String address;
 
 	public User(Integer id, String name, Date createdAt, Date updatedAt, Float fine, Integer numOfBooksPresent,
-			String email, String password, String address) {
+			String email, String password, String address,Roles role) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -62,6 +67,7 @@ public class User  {
 		this.email = email;
 		this.password = password;
 		this.address = address;
+		this.role=role;
 	}
 
 	public User() {
@@ -138,6 +144,14 @@ public class User  {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public Roles getRole() {
+		return role;
+	}
+
+	public void setRole(Roles role) {
+		this.role = role;
 	}
 	
     
