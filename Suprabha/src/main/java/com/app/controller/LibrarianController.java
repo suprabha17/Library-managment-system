@@ -36,7 +36,7 @@ public class LibrarianController {
 	   System.out.println("in controller");
 	}
 	
-	//add book  **not yet
+	//add book  **working
 	@PostMapping("/Book")
 	public Book/*ResponseEntity<?>*/ addBook(@Valid @RequestBody BookDto bookdto)
 	{
@@ -82,7 +82,7 @@ public class LibrarianController {
 		}
 	  
 	  //delete book by id
-	  //not working
+	  // working!!!
 	    @DeleteMapping("/{bookId}")
 		public void deleteBookById(@PathVariable Integer bookId)
 		{
@@ -98,8 +98,38 @@ public class LibrarianController {
 		  labService.updateBookQty(bookId, 1);
 	  }
 	  
+	  
+	  @GetMapping("/member") ///workikng!!!
+	  public ResponseEntity<?> allMembers()
+		{
+		System.out.println("in allBook");
+			try {
+			
+			return new ResponseEntity<>(labService.getAllMember(), HttpStatus.OK);
+			}catch(CustomRuntimeException e)
+			{
+				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+			}
+		
+		}
+	  
+	  @GetMapping
+	  public ResponseEntity<?> allIssueBook()
+		{
+		System.out.println("in allBook");
+			try {
+			
+			return new ResponseEntity<>(labService.getAllissueBook(), HttpStatus.OK);
+			}catch(CustomRuntimeException e)
+			{
+				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+			}
+		
+		}
+	  
+	  
 	  @PostMapping("/issue")
-		public ResponseEntity<?> addBook(@Valid @RequestBody Integer bookId,Integer memberId)
+		public ResponseEntity<?> issueBook(@Valid @RequestBody Integer bookId,Integer memberId)
 		{
 			try {
 			labService.issueBook(bookId, memberId);
@@ -111,7 +141,7 @@ public class LibrarianController {
 		
 		}
 	  
-	  @DeleteMapping("/member/{memberId}")
+	  @DeleteMapping("/member/{memberId}") //working
 	  
 	  public ResponseEntity<?> deleteMember(@PathVariable Integer memberId)
 		{
@@ -124,10 +154,11 @@ public class LibrarianController {
 			}
 		
 		}
-	  @GetMapping("/search/{author}")
+	  @GetMapping("/aythor/{author}")  //working
 	   
 	  public ResponseEntity<?> serchByAuthor(@PathVariable String author)
 		{
+		  System.out.println("in serch author ");
 			try {
 			
 			return new ResponseEntity<>(labService.findByAuthor(author), HttpStatus.OK);
@@ -138,10 +169,11 @@ public class LibrarianController {
 		
 		}
 	
-	  @GetMapping("/search/{title}")
+	  @GetMapping("/title/{title}")//working
 	   
 	  public ResponseEntity<?> serchByTitle(@PathVariable String title)
 		{
+		  System.out.println("in search title");
 			try {
 			
 			return new ResponseEntity<>(labService.findByTitle(title), HttpStatus.OK);

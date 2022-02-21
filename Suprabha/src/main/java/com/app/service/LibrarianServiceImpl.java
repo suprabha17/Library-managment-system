@@ -52,14 +52,20 @@ public Book addBooks(BookDto bookDtoList) {
 		//for logger
 		
 		
-
-	
+////interface ProjectIdAndName{
+//    String getId();
+//    String getName();
+//}
+//	
 	
 }
 
 
 @Override
 public List<Book> getAllBooks() {
+	//updated by sonali
+	//b1--object
+	//string name=b1.get(0);
 	return bdao.findAll();
 }
 
@@ -294,6 +300,12 @@ public List<BookIdMemberMapping> getAllissueBook() {
 	return bmdao.findAll();
 }
 
+@Override
+public List<User> getAllMember() {
+	
+	return mdao.findAll();
+	
+}
 
 
 

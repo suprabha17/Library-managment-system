@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -18,7 +19,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Table(name = "book")
 public class Book  {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
@@ -32,13 +33,12 @@ public class Book  {
     @Column(name = "author")
     private String  author;
 
-    @CreatedDate
-    //@DateTimeStamp
+    
+    @UpdateTimestamp
     @Column(name = "created_at")
     private Date createdAt;
 
-    @LastModifiedDate
-    
+    @LastModifiedDate    
     @Column(name = "updated_at")
     private Date updatedAt;
 
@@ -46,12 +46,21 @@ public class Book  {
     {
     	
     }
-    public Book(String title2, String getauthor, Integer availabilityCount2) {
+    public Book(   String title2, String getauthor, Integer availabilityCount2) {
     	title=title2;
     	author=getauthor;
     	availabilityCount=availabilityCount2;
 	}
+    
+    
 
+	public Book(Integer id, String title, @NotNull Integer availabilityCount, String author) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.availabilityCount = availabilityCount;
+		this.author = author;
+	}
 	public Integer getId() {
         return id;
     }

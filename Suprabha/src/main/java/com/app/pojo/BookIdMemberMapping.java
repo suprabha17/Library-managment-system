@@ -1,20 +1,24 @@
 package com.app.pojo;
 
-import org.hibernate.annotations.Columns;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-
 import java.time.LocalDate;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Table(name = "memberid_bookid_mapping")
 public class BookIdMemberMapping {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
 
     @NotEmpty(message = "bookId cannot be null")
@@ -22,17 +26,19 @@ public class BookIdMemberMapping {
 
     @NotEmpty(message = "scholarId cannot be null ")
     private Integer memberId;
-
+    
+    
+    @UpdateTimestamp
     @NotEmpty(message = "issuedon cannot be null ")
     private Date issuedOn;
 
-    @LastModifiedDate
+    
     private Date returnDate;
     
     @Column(name = "expectedReturn")
     private LocalDate expectedReturn;
     
-    @LastModifiedDate
+    
     private Date renewedAt;
 
     @Column(name = "num_of_times_renewed")

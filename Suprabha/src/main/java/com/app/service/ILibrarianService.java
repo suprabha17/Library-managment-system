@@ -6,6 +6,7 @@ import com.app.dto.BookDto;
 import com.app.dto.MemberDto;
 import com.app.pojo.Book;
 import com.app.pojo.BookIdMemberMapping;
+import com.app.pojo.User;
 
 public interface ILibrarianService {
 	
@@ -18,7 +19,7 @@ public interface ILibrarianService {
      void updateBookQty(Integer bookId,Integer qty);  //yes it is working
      //issue book
      void issueBook(Integer bookId, Integer memberId);//added
-     
+     List<User> getAllMember();
      //book renew 
      void renewBook(Integer bookId, Integer memberId);//
      String delete(Integer memberId);// added
@@ -27,5 +28,7 @@ public interface ILibrarianService {
      String returnBook(Integer issueId);  //added
      void updateMemberFine(Integer memberId, Float amount);
      //List<BookIdMemberMapping> bookForFine();
-     List<BookIdMemberMapping> getAllissueBook();
+     List<BookIdMemberMapping> getAllissueBook();//added
+     
+     
 }

@@ -3,7 +3,7 @@ package com.app.Enums;
 
 public enum Roles {
     LIBRARIAN(1,"Librarian"),
-    SCHOLAR(2,"Scholar");
+    MEMBER(2,"MEMBER");
 
     Roles(Integer id, String roleName) {
         this.id = id;

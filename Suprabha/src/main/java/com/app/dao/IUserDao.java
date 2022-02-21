@@ -10,6 +10,6 @@ public interface IUserDao extends JpaRepository<User,Integer> {
 
 	List<User> findByEmail(String email);
     
-	 
+	//List<ProjectIdAndName> findAll();
 	
 }
