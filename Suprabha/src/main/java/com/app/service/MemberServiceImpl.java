@@ -31,6 +31,7 @@ public class MemberServiceImpl implements IMemberService {
 	   
 	@Autowired
 	private EntityManager manager;
+	
 	   @Autowired
 	   private IMemberBookDao bmdao;
 	   
@@ -47,8 +48,7 @@ public class MemberServiceImpl implements IMemberService {
 		user.setName(memberdto.getName());
 		user.setEmail(memberdto.getEmail());
 		user.setAddress(memberdto.getAddress());
-		user.setPassword(memberdto.getPassword());
-		
+		user.setPassword(memberdto.getPassword());		
         System.out.println("added successfuly");
         return mdao.save(user);
 	}
@@ -72,13 +72,14 @@ public class MemberServiceImpl implements IMemberService {
         		member.setNumOfBooksPresent(numberOfBookPresent++);
         		
         	}
-        	 Consumer<Book>bookConsumer = book -> {
+        	 Consumer<Book> bookConsumer = book -> {
                  Integer presentBooksAtLib = book.getAvailabilityCount();
                  if(presentBooksAtLib>0)
                  book.setAvailabilityCount(presentBooksAtLib--);
                  else
                 	 throw new DependanceyException("Book not present in library");
         	};
+        	
         	bdao.findById(bookId).ifPresent(bookConsumer);
         	mdao.save(member);
         	BookIdMemberMapping bmmapping=new BookIdMemberMapping();
@@ -162,6 +163,11 @@ public class MemberServiceImpl implements IMemberService {
 	public void fineToPay(Integer issueId, Float fine) {
 		BookIdMemberMapping issueBook= bmdao.findById(issueId).orElseThrow(()->new RecordNotFound("record not found"));
 		issueBook.setFineOnBook(issueBook.getFineOnBook()-fine);
+		                int memberID=issueBook.getMemberId();
+		               User user= mdao.findById(memberID).orElseThrow(()->new RecordNotFound("record not found"));
+		               ///update fie in the member
+		               user.setFine(user.getFine()-fine);
+		               mdao.save(user);		               
 		bmdao.save(issueBook);
 		
 	}
@@ -179,11 +185,25 @@ public class MemberServiceImpl implements IMemberService {
 
 
 	@Override
-	public User validateUser(String email, String pwd) {
+	public User validateUser(String email, String pwd)
+	{
 		String jpql="select u from User u where u.email=:em and u.password=:pass";
 		return manager.createQuery(jpql, User.class).setParameter("em", email)
-				.setParameter("pass", pwd).getSingleResult();
+				.setParameter("pass", pwd).getSingleResult();		
 	}
+
+
+	@Override
+	public void bookReserve(int memberId, int bookId)
+	{
+		
+		
+		
+	}
+	
+	
+	
+	
 	
 	
 	
