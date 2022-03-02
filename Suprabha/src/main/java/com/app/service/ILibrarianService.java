@@ -27,7 +27,7 @@ public interface ILibrarianService {
      Book findByTitle(String title);//added
      String returnBook(Integer issueId);  //added
      void updateMemberFine(Integer memberId, Float amount);
-     //List<BookIdMemberMapping> bookForFine();
+     List<BookIdMemberMapping> bookForFine();
      List<BookIdMemberMapping> getAllissueBook();//added
      
      

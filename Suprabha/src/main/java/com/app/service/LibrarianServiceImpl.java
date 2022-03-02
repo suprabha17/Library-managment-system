@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +31,8 @@ public class LibrarianServiceImpl implements ILibrarianService
 {
    @Autowired
    private IBookDao bdao;
-   
+   @Autowired
+	private EntityManager manager;
    @Autowired
    private IUserDao mdao;
    @Autowired
@@ -286,13 +289,13 @@ public void updateMemberFine(Integer issueId, Float amount)
 	   throw new DependanceyException("cannot add fine on it");
 }
 //*******************************
-//@Override
-//public List<BookIdMemberMapping> bookForFine()
-//{
-//	List<BookIdMemberMapping> issueBook=bmdao.findBy
-//	//select * from BookIdMemberMapping where expected return date=now();
-//	return ;
-//}
+@Override
+public List<BookIdMemberMapping> bookForFine()
+{
+	List<BookIdMemberMapping> issueBook=bmdao.findByreturnDate(LocalDate.now());
+	//select * from BookIdMemberMapping where expected return date=now();
+	return issueBook;
+}
 
 @Override
 public List<BookIdMemberMapping> getAllissueBook() {

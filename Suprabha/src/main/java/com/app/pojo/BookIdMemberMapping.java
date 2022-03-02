@@ -47,12 +47,15 @@ public class BookIdMemberMapping {
     @Column(name="fine")
     private  Float fineOnBook;
     
+    @Column(name ="reservation")
+    private int reservation;
+    
     
 
     public BookIdMemberMapping(Integer id, @NotEmpty(message = "bookId cannot be null") Integer bookId,
 			@NotEmpty(message = "scholarId cannot be null ") Integer memberId,
 			@NotEmpty(message = "issuedon cannot be null ") Date issuedOn, Date returnDate, LocalDate expectedReturn,
-			Date renewedAt, Integer numOfTimesRenewed,Float fine) {
+			Date renewedAt, Integer numOfTimesRenewed,Float fine,Integer reservation) {
 		super();
 		Id = id;
 		this.bookId = bookId;
@@ -63,6 +66,7 @@ public class BookIdMemberMapping {
 		this.renewedAt = renewedAt;
 		this.numOfTimesRenewed = numOfTimesRenewed;
 		fineOnBook=fine;
+		this.reservation=reservation;
 	}
 
 	public BookIdMemberMapping() {
@@ -142,12 +146,23 @@ public class BookIdMemberMapping {
 		this.fineOnBook = fineOnBook;
 	}
 
+	public int getReservation() {
+		return reservation;
+	}
+
+	public void setReservation(int reservation) {
+		this.reservation = reservation;
+	}
+
 	@Override
 	public String toString() {
 		return "BookIdMemberMapping [Id=" + Id + ", bookId=" + bookId + ", memberId=" + memberId + ", issuedOn="
 				+ issuedOn + ", returnDate=" + returnDate + ", expectedReturn=" + expectedReturn + ", renewedAt="
-				+ renewedAt + ", numOfTimesRenewed=" + numOfTimesRenewed + ", fineOnBook=" + fineOnBook + "]";
+				+ renewedAt + ", numOfTimesRenewed=" + numOfTimesRenewed + ", fineOnBook=" + fineOnBook
+				+ ", reservation=" + reservation + "]";
 	}
+
+	
 
 	
 }

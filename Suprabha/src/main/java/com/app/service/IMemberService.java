@@ -15,4 +15,5 @@ public interface IMemberService {
     void fineToPay(Integer issueId,Float fine);
     List<Book> allBooks();
     User validateUser(String email, String pwd);
+    void bookReserve(int memberId,int bookId);
 }
