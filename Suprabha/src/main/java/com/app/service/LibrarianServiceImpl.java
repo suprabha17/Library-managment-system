@@ -45,64 +45,27 @@ public class LibrarianServiceImpl implements ILibrarianService
    
 @Override
 public Book addBooks(BookDto bookDtoList) {
-	/*
-	 * Consumer<BookDto> bookdtoconsumer=bookdto-> { Book book=new Book();
-	 * book.setTitle(bookdto.getTitle()); book.setauthor(bookdto.getauthor());
-	 * book.setAvailabilityCount(bookdto.getAvailabilityCount()); //for logger
-	 */		
-	return bdao.save(new Book(bookDtoList.getTitle(),bookDtoList.getauthor(),bookDtoList.getAvailabilityCount()));
-		//bdao.save(book);
-		//for logger
 		
+	return bdao.save(new Book(bookDtoList.getTitle(),
+			bookDtoList.getauthor(),bookDtoList.getAvailabilityCount()));
 		
-////interface ProjectIdAndName{
-//    String getId();
-//    String getName();
-//}
-//	
 	
 }
 
 
 @Override
 public List<Book> getAllBooks() {
-	//updated by sonali
-	//b1--object
-	//string name=b1.get(0);
+	
 	return bdao.findAll();
 }
 
 @Override
 public void deleteBook(Integer deletebook) {	
-	//while deleting a book , we need to check if this book is associated with any member.
-    //if this book is associated with any scholar, then deletion cannot be performed
-//	Integer bookIdList= deletebook;
-//	Consumer<Integer> bookIDConsumer=bookId->{
-//		Optional<Book> optional=(bdao.findById(bookId));
-//		if(optional.isPresent())
-//		{
-//			//here checking is book issued.
-//			Optional<List<BookIdMemberMapping>> optional1=
-//					Optional.ofNullable(bmdao.findByBookId(bookId));
-//			        if(optional1.isPresent())
-//			        {
-//			throw new DependanceyException("Book can't be deleted, because it is issued");
-//		  }
-//			        System.out.println("deleteing Book by id"+bookId);
-//			        bdao.deleteById(bookId);
-//			        System.out.println("deleted successfully");
-//       }
-//		else
-//       {
-//    	   System.out.println("book with id not found");
-//    	   throw new RecordNotFound("this book is not available..");
-//       }
-//		
-//	};
+	
 	
 	System.out.println("in book delet impl***");
-	BookIdMemberMapping issueBook=bmdao.findByBookId(deletebook);
-	if(issueBook.getreturnDate()!=null)
+	Optional<Book> book=bdao.findById(deletebook);
+	if(book.get().getAvailabilityCount()==1)
 		bdao.deleteById(deletebook);
 	else
 		throw new DependanceyException("book is issued cannot remove");
@@ -143,11 +106,10 @@ public void updateBookQty(Integer bookId, Integer qty)
 
 @Override
 public void issueBook(Integer bookId, Integer memberId) {
-	bdao.findById(bookId)
-	.orElseThrow(()-> new RecordNotFound("book with givin Id not found"));
-	mdao.findById(memberId).ifPresentOrElse(
-    member->{
-    	if(member.getNumOfBooksPresent()>4)
+            	Book book=(bdao.findById(bookId)).get();
+                User member=(mdao.findById(memberId)).get();
+                System.out.println("in issue boook section****");
+       	if(member.getNumOfBooksPresent()>4)
     	{
     		throw new DependanceyException("Max books already issued .");
     	}else if(member.getFine()!=Constants.INITIAL_FINE_FOR_MEMBER)
@@ -156,31 +118,29 @@ public void issueBook(Integer bookId, Integer memberId) {
     	}else
     	{
     		int numberOfBookPresent=member.getNumOfBooksPresent();
-    		member.setNumOfBooksPresent(numberOfBookPresent++);
+    		numberOfBookPresent +=numberOfBookPresent;
+    		member.setNumOfBooksPresent(numberOfBookPresent);
+    		
+    		Integer qty=book.getAvailabilityCount();
+    		qty-=qty;
+    		book.setAvailabilityCount(qty);
+    		bdao.save(book);
+    		BookIdMemberMapping issue=new BookIdMemberMapping();
+    		issue.setBookId(bookId);
+    		issue.setMemberId(memberId);
+    		issue.setIssuedOn(LocalDate.now());
+    		issue.setExpectedReturn(LocalDate.now().plusDays(7));
+    		issue.setFineOnBook(Constants.INITIAL_FINE_FOR_MEMBER);
+    		issue.setNumOfTimesRenewed(Constants.INITIAL_RENEW_TIME);
+    		issue.setReservation(0);
+    		issue.setReturnDate(null);
+    		issue.setRenewedAt(null);
+    		bmdao.save(issue);
+    		mdao.save(member);
+    		
     		
     	}
-    	 Consumer<Book>bookConsumer = book -> {
-             Integer presentBooksAtLib = book.getAvailabilityCount();
-             if(presentBooksAtLib>0)
-             book.setAvailabilityCount(presentBooksAtLib--);
-             else
-            	 throw new DependanceyException("Book not present in library");
-    	};
-    	bdao.findById(bookId).ifPresent(bookConsumer);
-    	mdao.save(member);
-    	BookIdMemberMapping bmmapping=new BookIdMemberMapping();
-    	bmmapping.setMemberId(memberId);
-    	bmmapping.setBookId(bookId);
-    	bmmapping.setIssuedOn(new Date());
-    	bmdao.save(bmmapping);
-    }, ()->{
-    	new RecordNotFound("member with givin Id is not found");
-    });
-	BookIdMemberMapping bmmapping=new BookIdMemberMapping();
-	bmmapping.setMemberId(memberId);
-	bmmapping.setBookId(bookId);
-	bmmapping.setIssuedOn(new Date());
-	bmdao.save(bmmapping);
+	
 	
 }
 
@@ -211,7 +171,8 @@ public void renewBook(Integer bookId, Integer memberId) {
 					bmdao.findByBookIdAndMemberId(bookId,memberId);
 			int noOfRenew=bmmapping.getNumOfTimesRenewed();
 			bmmapping.setNumOfTimesRenewed(noOfRenew++);
-			bmmapping.setrenewedAt(new Date());
+			
+			bmmapping.setReturnDate(LocalDate.now());
 			bmdao.save(bmmapping);
 			System.out.println("renewed successfuly");
 		}
@@ -228,7 +189,7 @@ public void renewBook(Integer bookId, Integer memberId) {
 public String delete(Integer memberId) {
 	List<BookIdMemberMapping> issuemeber=bmdao.findByMemberId(memberId);
 	     
-	         if(issuemeber.get(0).getreturnDate()!=null)
+	         if(issuemeber.get(0).getReturnDate()!=null)
 	         {
 	        	 mdao.deleteById(memberId);
 	        	 return "deleted successfuly";
@@ -260,7 +221,8 @@ public String returnBook(Integer issueId) {
                   throw new DependanceyException("Fine is not cleared yet");  
                   else
                   {
-                	  issuedBook.setreturnDate(new Date());
+                	 
+                	  issuedBook.setReturnDate(LocalDate.now());
                 	          Integer bookId=issuedBook.getBookId();
                 	        Book book  =bdao.findById(bookId).orElseThrow(()->new RecordNotFound("this book is not issued"));
                 	        book.setAvailabilityCount(book.getAvailabilityCount()+1);
@@ -299,7 +261,7 @@ public List<BookIdMemberMapping> bookForFine()
 
 @Override
 public List<BookIdMemberMapping> getAllissueBook() {
-	 
+	 System.out.println("in all issue book");
 	return bmdao.findAll();
 }
 

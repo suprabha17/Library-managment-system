@@ -25,7 +25,7 @@ public class Book  {
     @Column(name = "title")
     private String title;
 
-    @NotNull
+    
     @Column(name = "availability_count")
     private Integer availabilityCount;
 
