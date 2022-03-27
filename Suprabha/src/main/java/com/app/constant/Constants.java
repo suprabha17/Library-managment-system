@@ -9,4 +9,5 @@ public interface Constants {
 	Float INITIAL_FINE_FOR_MEMBER=0F;
      String USER_ROLE="MEMBER";
 	Integer BOOK_RESEVRED=0;
+	Integer INITIAL_RENEW_TIME=0;
 }

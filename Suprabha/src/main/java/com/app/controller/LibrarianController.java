@@ -38,18 +38,13 @@ public class LibrarianController {
 	   System.out.println("in controller");
 	}
 	
+	
 	//add book  **working
 	@PostMapping("/Book")
-	public Book/*ResponseEntity<?>*/ addBook(@Valid @RequestBody BookDto bookdto)
+	public Book addBook(@Valid @RequestBody BookDto bookdto)
 	{
 		return limplser.addBooks(bookdto);
-//		try {
-//			
-//		return new ResponseEntity<>(limplser.addBooks(bookdto), HttpStatus.OK);
-//		}catch(CustomRuntimeException e)
-//		{
-//			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
-//		}
+
 	
 	}
 	
@@ -115,7 +110,7 @@ public class LibrarianController {
 		
 		}
 	  
-	  @GetMapping
+	  @GetMapping("/issuebook") //working
 	  public ResponseEntity<?> allIssueBook()
 		{
 		System.out.println("in allBook");
@@ -130,17 +125,12 @@ public class LibrarianController {
 		}
 	  
 	  
-	  @PostMapping("/issue")
-		public ResponseEntity<?> issueBook(@Valid @RequestBody Integer bookId,Integer memberId)
+	  @PostMapping("/issue") 
+		public void issueBook( @RequestBody Integer bookId,Integer memberId)
 		{
-			try {
+			
 			labService.issueBook(bookId, memberId);
-			return new ResponseEntity<>("status", HttpStatus.OK);
-			}catch(CustomRuntimeException e)
-			{
-				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
-			}
-		
+			
 		}
 	  
 	  @DeleteMapping("/member/{memberId}") //working
@@ -156,7 +146,7 @@ public class LibrarianController {
 			}
 		
 		}
-	  @GetMapping("/aythor/{author}")  //working
+	  @GetMapping("/author/{author}")  //working
 	   
 	  public ResponseEntity<?> serchByAuthor(@PathVariable String author)
 		{
@@ -186,8 +176,8 @@ public class LibrarianController {
 		
 		}
 	  
-	  @PutMapping("/issue/{issueId}")
-	  public ResponseEntity<?> serchByTitle(@PathVariable Integer issueId)
+	  @GetMapping("/issue/{issueId}")
+	  public ResponseEntity<?> serchById(@PathVariable Integer issueId)
 		{
 			try {
 			

@@ -1,7 +1,6 @@
 package com.app.pojo;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,37 +8,37 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
+
 
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.LastModifiedDate;
+
 
 @Entity
 @Table(name = "memberid_bookid_mapping")
 public class BookIdMemberMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer issueId;
 
-    @NotEmpty(message = "bookId cannot be null")
+    
     private Integer bookId;
 
-    @NotEmpty(message = "scholarId cannot be null ")
+    
     private Integer memberId;
     
     
     @UpdateTimestamp
-    @NotEmpty(message = "issuedon cannot be null ")
-    private Date issuedOn;
+    
+    private LocalDate issuedOn;
 
     
-    private Date returnDate;
+    private LocalDate returnDate;
     
     @Column(name = "expectedReturn")
     private LocalDate expectedReturn;
     
     
-    private Date renewedAt;
+    private LocalDate renewedAt;
 
     @Column(name = "num_of_times_renewed")
     private Integer numOfTimesRenewed;
@@ -49,15 +48,17 @@ public class BookIdMemberMapping {
     
     @Column(name ="reservation")
     private int reservation;
-    
-    
 
-    public BookIdMemberMapping(Integer id, @NotEmpty(message = "bookId cannot be null") Integer bookId,
-			@NotEmpty(message = "scholarId cannot be null ") Integer memberId,
-			@NotEmpty(message = "issuedon cannot be null ") Date issuedOn, Date returnDate, LocalDate expectedReturn,
-			Date renewedAt, Integer numOfTimesRenewed,Float fine,Integer reservation) {
+	public BookIdMemberMapping() {
 		super();
-		Id = id;
+	}
+
+
+	public BookIdMemberMapping(Integer issueId, Integer bookId, Integer memberId, LocalDate issuedOn, LocalDate returnDate,
+			LocalDate expectedReturn, LocalDate renewedAt, Integer numOfTimesRenewed, Float fineOnBook,
+			int reservation) {
+		super();
+		this.issueId = issueId;
 		this.bookId = bookId;
 		this.memberId = memberId;
 		this.issuedOn = issuedOn;
@@ -65,77 +66,75 @@ public class BookIdMemberMapping {
 		this.expectedReturn = expectedReturn;
 		this.renewedAt = renewedAt;
 		this.numOfTimesRenewed = numOfTimesRenewed;
-		fineOnBook=fine;
-		this.reservation=reservation;
+		this.fineOnBook = fineOnBook;
+		this.reservation = reservation;
 	}
 
-	public BookIdMemberMapping() {
-    }
+	
+	public Integer getIssueId() {
+		return issueId;
+	}
 
-    public Integer getId() {
-        return Id;
-    }
 
-    public void setId(Integer id) {
-        Id = id;
-    }
+	public void setIssueId(Integer issueId) {
+		this.issueId = issueId;
+	}
 
-    public Integer getBookId() {
-        return bookId;
-    }
 
-    public void setBookId(Integer bookId) {
-        this.bookId = bookId;
-    }
+	public Integer getBookId() {
+		return bookId;
+	}
 
-    public Integer getMemberId() {
-        return memberId;
-    }
+	public void setBookId(Integer bookId) {
+		this.bookId = bookId;
+	}
 
-    public void setMemberId(Integer memberId) {
-        this.memberId = memberId;
-    }
-    public Date getIssuedOn() {
-        return issuedOn;
-    }
+	public Integer getMemberId() {
+		return memberId;
+	}
 
-    public void setIssuedOn(Date issuedOn) {
-        this.issuedOn = issuedOn;
-    }
-   
+	public void setMemberId(Integer memberId) {
+		this.memberId = memberId;
+	}
 
-    public Date getrenewedAt() {
-        return renewedAt;
-    }
+	public LocalDate getIssuedOn() {
+		return issuedOn;
+	}
 
-    public void setrenewedAt(Date renewedAt) {
-        this.renewedAt = renewedAt;
-    }
-    
-    
-    public Date getreturnDate() {
-        return returnDate;
-    }
+	public void setIssuedOn(LocalDate issuedOn) {
+		this.issuedOn = issuedOn;
+	}
 
-    public void setreturnDate(Date returnAt) {
-        this.returnDate = returnAt;
-    }
+	public LocalDate getReturnDate() {
+		return returnDate;
+	}
 
-    public Integer getNumOfTimesRenewed() {
-        return numOfTimesRenewed;
-    }
+	public void setReturnDate(LocalDate returnDate) {
+		this.returnDate = returnDate;
+	}
 
-    public void setNumOfTimesRenewed(Integer numOfTimesRenewed) {
-        this.numOfTimesRenewed = numOfTimesRenewed;
-    }
-   
-
-    public LocalDate getExpectedReturn() {
+	public LocalDate getExpectedReturn() {
 		return expectedReturn;
 	}
 
 	public void setExpectedReturn(LocalDate expectedReturn) {
 		this.expectedReturn = expectedReturn;
+	}
+
+	public LocalDate getRenewedAt() {
+		return renewedAt;
+	}
+
+	public void setRenewedAt(LocalDate renewedAt) {
+		this.renewedAt = renewedAt;
+	}
+
+	public Integer getNumOfTimesRenewed() {
+		return numOfTimesRenewed;
+	}
+
+	public void setNumOfTimesRenewed(Integer numOfTimesRenewed) {
+		this.numOfTimesRenewed = numOfTimesRenewed;
 	}
 
 	public Float getFineOnBook() {
@@ -156,11 +155,17 @@ public class BookIdMemberMapping {
 
 	@Override
 	public String toString() {
-		return "BookIdMemberMapping [Id=" + Id + ", bookId=" + bookId + ", memberId=" + memberId + ", issuedOn="
+		return "BookIdMemberMapping [Id=" + issueId + ", bookId=" + bookId + ", memberId=" + memberId + ", issuedOn="
 				+ issuedOn + ", returnDate=" + returnDate + ", expectedReturn=" + expectedReturn + ", renewedAt="
 				+ renewedAt + ", numOfTimesRenewed=" + numOfTimesRenewed + ", fineOnBook=" + fineOnBook
 				+ ", reservation=" + reservation + "]";
 	}
+    
+    
+
+    
+
+	
 
 	
 

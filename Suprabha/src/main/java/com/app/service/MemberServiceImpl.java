@@ -1,4 +1,5 @@
 package com.app.service;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
@@ -85,7 +86,7 @@ public class MemberServiceImpl implements IMemberService {
         	BookIdMemberMapping bmmapping=new BookIdMemberMapping();
         	bmmapping.setMemberId(memberId);
         	bmmapping.setBookId(bookId);
-        	bmmapping.setIssuedOn(new Date());
+        	bmmapping.setIssuedOn(LocalDate.now());
         	bmdao.save(bmmapping);
         }, ()->{
         	new RecordNotFound("member with givin Id is not found");
@@ -93,7 +94,8 @@ public class MemberServiceImpl implements IMemberService {
 		BookIdMemberMapping bmmapping=new BookIdMemberMapping();
     	bmmapping.setMemberId(memberId);
     	bmmapping.setBookId(bookId);
-    	bmmapping.setIssuedOn(new Date());
+    	
+    	bmmapping.setIssuedOn(LocalDate.now());
     	bmdao.save(bmmapping);
 		
 	}
@@ -197,6 +199,7 @@ public class MemberServiceImpl implements IMemberService {
 	public void bookReserve(int memberId, int bookId)
 	{
 		
+		///show only qyt 0 books for reservation
 		
 		
 	}

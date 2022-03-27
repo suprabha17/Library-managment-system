@@ -36,7 +36,7 @@ public class MemberController {
 	}
 	
 	
-	 @GetMapping("/aythor/{author}")  //working
+	 @GetMapping("/author/{author}")  //working
 	   
 	  public ResponseEntity<?> serchByAuthor(@PathVariable String author)
 		{
