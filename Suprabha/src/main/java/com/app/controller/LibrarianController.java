@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.dto.BookDto;
+import com.app.dto.IssueBook;
 import com.app.exception.CustomRuntimeException;
 import com.app.pojo.Book;
+import com.app.pojo.BookIdMemberMapping;
 import com.app.service.ILibrarianService;
 import com.app.service.LibrarianServiceImpl;
 
@@ -89,7 +91,7 @@ public class LibrarianController {
 	  
 	  //update book qty
 	  //checked
-	  @PutMapping("/{bookId}")
+	  @PutMapping("/{bookId}") //working
 	  public void updateBookQtyplus(@PathVariable Integer bookId )
 	  {
 		  labService.updateBookQty(bookId, 1);
@@ -125,13 +127,43 @@ public class LibrarianController {
 		}
 	  
 	  
-	  @PostMapping("/issue") 
-		public void issueBook( @RequestBody Integer bookId,Integer memberId)
+	  @PostMapping("/issue")   //working
+		public void issueBook( @RequestBody IssueBook issuebook)
 		{
-			
-			labService.issueBook(bookId, memberId);
+		    System.out.println("in issue book ****");
+			labService.issueBook(issuebook);
 			
 		}
+	  
+	  //issuebook of member by memberID
+	  
+	  @GetMapping("/issuebook/{memberId}")//working
+	  public ResponseEntity<?> issueBookOfMemebr(@PathVariable Integer memberId)
+		{
+		System.out.println("in allBook");
+			try {
+			
+			return new ResponseEntity<>(labService.getIssueBookOfMemebr(memberId), HttpStatus.OK);
+			}catch(CustomRuntimeException e)
+			{
+				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+			}
+		
+		}
+	  @PutMapping("/issuebook/{issuebookId}")//working
+	  public ResponseEntity<?> returnBookIssued(@PathVariable Integer issuebookId)
+		{
+		System.out.println("in allBook");
+			try {
+			
+			return new ResponseEntity<>(labService.returnBook(issuebookId), HttpStatus.OK);
+			}catch(CustomRuntimeException e)
+			{
+				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+			}
+		
+		}
+	  
 	  
 	  @DeleteMapping("/member/{memberId}") //working
 	  
@@ -176,7 +208,7 @@ public class LibrarianController {
 		
 		}
 	  
-	  @GetMapping("/issue/{issueId}")
+	  @GetMapping("/issue/{issueId}") //working
 	  public ResponseEntity<?> serchById(@PathVariable Integer issueId)
 		{
 			try {
@@ -189,5 +221,34 @@ public class LibrarianController {
 		
 		}
 	
+	  
+	  @GetMapping("/fineOn") //working
+	  public ResponseEntity<?> bookForFines()
+		{
+			try {
+			
+			return new ResponseEntity<>(labService.bookForFine(), HttpStatus.OK);
+			}catch(CustomRuntimeException e)
+			{
+				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+			}
+		
+		}
+	  
+	  
+	  @PutMapping("/fineOn/{issueId}") //working fine
+	  public ResponseEntity<?>  addingFines(@PathVariable Integer issueId)
+		{
+			try {
+			
+			return new ResponseEntity<>(labService.updateMemberFine(issueId), HttpStatus.OK);
+			}catch(CustomRuntimeException e)
+			{
+				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+			}
+		
+		}
+	  
+	  //renew,fine pay,login,reservation
 	
 }
