@@ -12,4 +12,5 @@ public interface IMemberBookDao extends JpaRepository<BookIdMemberMapping,Intege
        List<BookIdMemberMapping> findByMemberId(Integer memberId);
        BookIdMemberMapping findByBookIdAndMemberId(Integer bookId,Integer memberId);
 	List<BookIdMemberMapping> findByreturnDate(LocalDate now);
+	List<BookIdMemberMapping> findByExpectedReturn(LocalDate now);
 }

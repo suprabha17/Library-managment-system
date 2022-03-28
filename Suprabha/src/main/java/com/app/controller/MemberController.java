@@ -8,12 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.dto.IssueBook;
 import com.app.dto.MemberDto;
 import com.app.exception.CustomRuntimeException;
+import com.app.pojo.BookIdMemberMapping;
 import com.app.pojo.User;
 import com.app.service.LibrarianServiceImpl;
 import com.app.service.MemberServiceImpl;
@@ -66,13 +69,13 @@ public class MemberController {
 		
 		}
 	  
-	  
-	  @PostMapping("/issue")
-		public ResponseEntity<?> issueBook(@Valid @RequestBody Integer bookId,Integer memberId)
+	  @GetMapping("/issuebook") //working for reservation
+	  public ResponseEntity<?> allIssueBook()
 		{
+		System.out.println("in allBook");
 			try {
-			labService.issueBook(bookId, memberId);
-			return new ResponseEntity<>("status", HttpStatus.OK);
+			
+			return new ResponseEntity<>(labService.getAllissueBookForReservation(), HttpStatus.OK);
 			}catch(CustomRuntimeException e)
 			{
 				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
@@ -80,11 +83,37 @@ public class MemberController {
 		
 		}
 	  
+	  @PostMapping("/issue")   //working
+		public void issueBook( @RequestBody IssueBook issuebook)
+		{
+		    System.out.println("in issue book ****");
+			labService.issueBook(issuebook);
+			
+		}
+	  
+	  //issuebook of member by memberID
+	  
+	  @GetMapping("/issuebook/{memberId}")//working
+	  public ResponseEntity<?> allMembers(@PathVariable Integer memberId)
+		{
+		System.out.println("in allBook");
+			try {
+			
+			return new ResponseEntity<>(labService.getIssueBookOfMemebr(memberId), HttpStatus.OK);
+			}catch(CustomRuntimeException e)
+			{
+				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+			}
+		
+		}
+	  	  
+	  
+	  
 	  
 	@GetMapping("/books")
 	
 	   
-	  public ResponseEntity<?> allBooks()
+	  public ResponseEntity<?> allBooks()  
 		{
 		  System.out.println("in member all books method");
 			try {
@@ -96,6 +125,8 @@ public class MemberController {
 			}
 		
 		}
+	
+	
 	
 	@GetMapping("/validate")
 	public ResponseEntity<?> userValidation(@RequestBody String email,String pass )

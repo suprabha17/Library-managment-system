@@ -1,6 +1,7 @@
 package com.app.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import com.app.dao.IBookDao;
 import com.app.dao.IMemberBookDao;
 import com.app.dao.IUserDao;
 import com.app.dto.BookDto;
+import com.app.dto.IssueBook;
 import com.app.exception.DependanceyException;
 import com.app.exception.RecordNotFound;
 import com.app.pojo.Book;
@@ -105,15 +107,21 @@ public void updateBookQty(Integer bookId, Integer qty)
 
 
 @Override
-public void issueBook(Integer bookId, Integer memberId) {
-            	Book book=(bdao.findById(bookId)).get();
-                User member=(mdao.findById(memberId)).get();
+public void issueBook(IssueBook issubook) {
+	System.out.println("in issue book method innn");
+	 User member=(mdao.findById(issubook.getMemberId())).get();
+	 System.out.println("????");
+            	Book book=(bdao.findById(issubook.getBookId())).get();
+            	
+            	
+               
                 System.out.println("in issue boook section****");
        	if(member.getNumOfBooksPresent()>4)
     	{
     		throw new DependanceyException("Max books already issued .");
-    	}else if(member.getFine()!=Constants.INITIAL_FINE_FOR_MEMBER)
+    	}else if(member.getFine()!=0)
     	{
+    		System.out.println(member.getFine()+"-----fine");
     		throw new DependanceyException("Fine is not cleared yet");
     	}else
     	{
@@ -126,8 +134,8 @@ public void issueBook(Integer bookId, Integer memberId) {
     		book.setAvailabilityCount(qty);
     		bdao.save(book);
     		BookIdMemberMapping issue=new BookIdMemberMapping();
-    		issue.setBookId(bookId);
-    		issue.setMemberId(memberId);
+    		issue.setBookId(issubook.getBookId());
+    		issue.setMemberId(issubook.getMemberId());
     		issue.setIssuedOn(LocalDate.now());
     		issue.setExpectedReturn(LocalDate.now().plusDays(7));
     		issue.setFineOnBook(Constants.INITIAL_FINE_FOR_MEMBER);
@@ -217,7 +225,7 @@ public String returnBook(Integer issueId) {
 	BookIdMemberMapping issuedBook= bmdao.findById(issueId).orElseThrow(()->new RecordNotFound("this book is not issued"));
 	
 	          User member=mdao.findById(issuedBook.getMemberId()).orElseThrow(()->new RecordNotFound("this book is not issued"));
-	           if(member.getFine()!=Constants.INITIAL_FINE_FOR_MEMBER)
+	           if(member.getFine()!=0)
                   throw new DependanceyException("Fine is not cleared yet");  
                   else
                   {
@@ -236,27 +244,34 @@ public String returnBook(Integer issueId) {
 
 //fine added into the member account
 @Override
-public void updateMemberFine(Integer issueId, Float amount) 
+public String updateMemberFine(Integer issueId)
+
 {
+	float amount =10;
 	BookIdMemberMapping issueBook=bmdao.findById(issueId).orElseThrow(()->new RecordNotFound("book not found"));
     User member=mdao.findById(issueBook.getMemberId()).orElseThrow(()->new RecordNotFound("member not found"));
    if(issueBook.getExpectedReturn().isBefore(LocalDate.now()))
    {
-	   issueBook.setFineOnBook(amount);
-	   member.setFine(amount);
-	   mdao.save(member);
+	   float amt=issueBook.getFineOnBook();
+	   issueBook.setFineOnBook(amount+amt);
+	   member.setFine(amount+amt);
 	    bmdao.save(issueBook);
+	    return "fine updated";
    }
    else
-	   throw new DependanceyException("cannot add fine on it");
+   {
+	   
+	  return "not fine on it";
+   }
 }
 //*******************************
 @Override
 public List<BookIdMemberMapping> bookForFine()
 {
-	List<BookIdMemberMapping> issueBook=bmdao.findByreturnDate(LocalDate.now());
-	//select * from BookIdMemberMapping where expected return date=now();
-	return issueBook;
+	
+	
+	return bmdao.findByExpectedReturn(LocalDate.now());
+	
 }
 
 @Override
@@ -265,10 +280,43 @@ public List<BookIdMemberMapping> getAllissueBook() {
 	return bmdao.findAll();
 }
 
+
+
 @Override
 public List<User> getAllMember() {
 	
 	return mdao.findAll();
+	
+}
+
+@Override
+public List<BookIdMemberMapping> getIssueBookOfMemebr(Integer memberId) {
+	
+	
+	       List<BookIdMemberMapping> issuebooks=bmdao.findByMemberId(memberId);
+	       List<BookIdMemberMapping> allIssue= new ArrayList<BookIdMemberMapping>();
+	       for(BookIdMemberMapping r:issuebooks )
+	       {
+	    	   if(r.getReturnDate()==null)
+	    		   allIssue.add(r);
+	    	   
+	       }
+		return allIssue;
+}
+
+
+
+@Override
+public List<BookIdMemberMapping> getAllissueBookForReservation() {
+	     List<BookIdMemberMapping> issueBook = bmdao.findAll();
+	     List<BookIdMemberMapping> allIssue= new ArrayList<BookIdMemberMapping>();
+	       for(BookIdMemberMapping r:issueBook )
+	       {
+	    	   if(r.getReturnDate()==null)
+	    		   allIssue.add(r);
+	    	   
+	       }
+		return allIssue;
 	
 }
 
