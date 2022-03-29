@@ -9,7 +9,7 @@ import com.app.pojo.User;
 public interface IUserDao extends JpaRepository<User,Integer> {
 
 	List<User> findByEmail(String email);
-    
+    List<User> findByEmailAndPassword(String email,String password);
 	//List<ProjectIdAndName> findAll();
 	
 }

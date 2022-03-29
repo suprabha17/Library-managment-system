@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.dto.IssueBook;
+import com.app.dto.Login;
 import com.app.dto.MemberDto;
 import com.app.exception.CustomRuntimeException;
 import com.app.pojo.BookIdMemberMapping;
@@ -127,20 +128,36 @@ public class MemberController {
 		}
 	
 	
-	
-	@GetMapping("/validate")
-	public ResponseEntity<?> userValidation(@RequestBody String email,String pass )
+	@GetMapping("login")
+	public ResponseEntity<?> userValidation(@RequestBody Login details)
 	{
-	  System.out.println("in member all books method");
+	  System.out.println("in member login");
 		try {
 		
-		return new ResponseEntity<>(mservice.validateUser(email,pass), HttpStatus.OK);
+		return new ResponseEntity<>(mservice.validateUser(details), HttpStatus.OK);
 		}catch(CustomRuntimeException e)
 		{
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
 		}
 	
 	}
+	
+	@PutMapping("/issuebook/{issueId}")  //working
+	
+	public ResponseEntity<?> userValidation(@PathVariable Integer issueId)
+	{
+	  System.out.println("fine pay");
+		try {
+		
+		return new ResponseEntity<>(mservice.fineToPay(issueId), HttpStatus.OK);
+		}catch(CustomRuntimeException e)
+		{
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+		}
+	
+	}
+	
+	
 	
 	
 }

@@ -16,6 +16,7 @@ import com.app.constant.Constants;
 import com.app.dao.IBookDao;
 import com.app.dao.IMemberBookDao;
 import com.app.dao.IUserDao;
+import com.app.dto.Login;
 import com.app.dto.MemberDto;
 import com.app.exception.DependanceyException;
 import com.app.exception.RecordNotFound;
@@ -55,51 +56,7 @@ public class MemberServiceImpl implements IMemberService {
 	}
 
 
-	@Override
-	public void issueBook(Integer bookId, Integer memberId) {
-		bdao.findById(bookId)
-		.orElseThrow(()-> new RecordNotFound("book with givin Id not found"));
-		mdao.findById(memberId).ifPresentOrElse(
-        member->{
-        	if(member.getNumOfBooksPresent()>4)
-        	{
-        		throw new DependanceyException("Max books already issued .");
-        	}else if(member.getFine()!=Constants.INITIAL_FINE_FOR_MEMBER)
-        	{
-        		throw new DependanceyException("Fine is not cleared yet");
-        	}else
-        	{
-        		int numberOfBookPresent=member.getNumOfBooksPresent();
-        		member.setNumOfBooksPresent(numberOfBookPresent++);
-        		
-        	}
-        	 Consumer<Book> bookConsumer = book -> {
-                 Integer presentBooksAtLib = book.getAvailabilityCount();
-                 if(presentBooksAtLib>0)
-                 book.setAvailabilityCount(presentBooksAtLib--);
-                 else
-                	 throw new DependanceyException("Book not present in library");
-        	};
-        	
-        	bdao.findById(bookId).ifPresent(bookConsumer);
-        	mdao.save(member);
-        	BookIdMemberMapping bmmapping=new BookIdMemberMapping();
-        	bmmapping.setMemberId(memberId);
-        	bmmapping.setBookId(bookId);
-        	bmmapping.setIssuedOn(LocalDate.now());
-        	bmdao.save(bmmapping);
-        }, ()->{
-        	new RecordNotFound("member with givin Id is not found");
-        });
-		BookIdMemberMapping bmmapping=new BookIdMemberMapping();
-    	bmmapping.setMemberId(memberId);
-    	bmmapping.setBookId(bookId);
-    	
-    	bmmapping.setIssuedOn(LocalDate.now());
-    	bmdao.save(bmmapping);
-		
-	}
-
+	
 
 	@Override
 	public void renewBook(Integer bookId, Integer memberId) {
@@ -162,15 +119,18 @@ public class MemberServiceImpl implements IMemberService {
 
 
 	@Override
-	public void fineToPay(Integer issueId, Float fine) {
+	public String fineToPay(Integer issueId) {
+		System.out.println("in fine pay---");
+		float fine=0;
 		BookIdMemberMapping issueBook= bmdao.findById(issueId).orElseThrow(()->new RecordNotFound("record not found"));
-		issueBook.setFineOnBook(issueBook.getFineOnBook()-fine);
+		issueBook.setFineOnBook(fine);
 		                int memberID=issueBook.getMemberId();
 		               User user= mdao.findById(memberID).orElseThrow(()->new RecordNotFound("record not found"));
 		               ///update fie in the member
-		               user.setFine(user.getFine()-fine);
+		               user.setFine(fine);
 		               mdao.save(user);		               
 		bmdao.save(issueBook);
+		return "fine payed";
 		
 	}
 
@@ -187,11 +147,18 @@ public class MemberServiceImpl implements IMemberService {
 
 
 	@Override
-	public User validateUser(String email, String pwd)
-	{
-		String jpql="select u from User u where u.email=:em and u.password=:pass";
-		return manager.createQuery(jpql, User.class).setParameter("em", email)
-				.setParameter("pass", pwd).getSingleResult();		
+	public User validateUser(Login details)
+	{System.out.println("---validate user-----");
+		System.out.println("in login service ");
+		System.out.println(details.getEmail());
+		System.out.println(details.getPassord());
+		
+		System.out.println(mdao.findByEmail(details.getEmail()).get(0).toString());
+//		System.out.println(mdao.findByEmailAndPassword(email, password));
+//		String jpql="select u from User u where u.email=:em and u.password=:pass";
+//		return manager.createQuery(jpql, User.class).setParameter("em",details.getEmail())
+//				.setParameter("pass", details.getPassord()).getSingleResult();	
+		return mdao.findByEmail(details.getEmail()).get(0);
 	}
 
 
