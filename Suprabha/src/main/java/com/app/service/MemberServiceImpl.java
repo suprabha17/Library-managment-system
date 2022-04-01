@@ -1,12 +1,10 @@
 package com.app.service;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import javax.websocket.Session;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,7 +57,7 @@ public class MemberServiceImpl implements IMemberService {
 	
 
 	@Override
-	public void renewBook(Integer bookId, Integer memberId) {
+	public String renewBook(Integer bookId, Integer memberId) {
 		if(!bdao.findById(bookId).isPresent())
 		{
 			throw new RecordNotFound("no book with given Id"+bookId);
@@ -68,7 +66,7 @@ public class MemberServiceImpl implements IMemberService {
 		{
 			throw new RecordNotFound("no member with given Id"+memberId);
 		}
-		int noOftimeRenew =bmdao.findByBookIdAndMemberId(bookId,memberId).getNumOfTimesRenewed();
+		int noOftimeRenew =bmdao.findByBookIdAndMemberId(bookId,memberId).get(0).getNumOfTimesRenewed();
 		if(noOftimeRenew==Constants.MAX_RENEWAL)
 		{
 			throw new DependanceyException("this book has been renewed by max no of times");
@@ -80,17 +78,23 @@ public class MemberServiceImpl implements IMemberService {
 				throw new DependanceyException("User has been charged fine. Please pay and renew books");
 			}else
 			{
-				BookIdMemberMapping bmmapping =
+				List<BookIdMemberMapping> bmmapping1 =
 						bmdao.findByBookIdAndMemberId(bookId,memberId);
-				int noOfRenew=bmmapping.getNumOfTimesRenewed();
-				bmmapping.setNumOfTimesRenewed(noOfRenew++);
-				bmdao.save(bmmapping);
+				BookIdMemberMapping bmmapping=bmmapping1.get(0);
+				System.out.println(bmmapping);
+				Integer noOfRenew=bmmapping.getNumOfTimesRenewed();
+				noOfRenew+=1;
+				bmmapping.setNumOfTimesRenewed(noOfRenew);
+				bmmapping.setRenewedAt(LocalDate.now());
+				bmdao.save(bmmapping);	
 				System.out.println("renewed successfuly");
+				return "renewved successfully";
 			}
 		}
 		
 	}
-
+   
+	
 
 	@Override   
 	public void updateMemberAdd(Integer Id,String add) 
@@ -154,11 +158,14 @@ public class MemberServiceImpl implements IMemberService {
 		System.out.println(details.getPassord());
 		
 		System.out.println(mdao.findByEmail(details.getEmail()).get(0).toString());
+		if(mdao.findByEmail(details.getEmail()).get(0)!=null)
 //		System.out.println(mdao.findByEmailAndPassword(email, password));
 //		String jpql="select u from User u where u.email=:em and u.password=:pass";
 //		return manager.createQuery(jpql, User.class).setParameter("em",details.getEmail())
 //				.setParameter("pass", details.getPassord()).getSingleResult();	
-		return mdao.findByEmail(details.getEmail()).get(0);
+		return mdao.findByEmailAndPassword(details.getEmail(), details.getPassord()).get(0);
+		else
+			return null;
 	}
 
 
@@ -169,6 +176,22 @@ public class MemberServiceImpl implements IMemberService {
 		///show only qyt 0 books for reservation
 		
 		
+	}
+
+
+
+
+	@Override
+	public List<Book> availableBook() {
+		List<Book> books=bdao.findAll();
+		List<Book> bookAvailable=new ArrayList<Book>();
+		for(Book b:books)
+		{
+			if(b.getAvailabilityCount()==1)
+				bookAvailable.add(b);
+		}
+		
+		return bookAvailable;
 	}
 	
 	

@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,7 @@ import com.app.pojo.Book;
 import com.app.pojo.BookIdMemberMapping;
 import com.app.service.ILibrarianService;
 import com.app.service.LibrarianServiceImpl;
-
+@CrossOrigin("http:localhost:3001")
 @RestController
 @RequestMapping("/libr")
 
@@ -127,11 +128,13 @@ public class LibrarianController {
 		}
 	  
 	  
-	  @PostMapping("/issue")   //working
-		public void issueBook( @RequestBody IssueBook issuebook)
+	  @PostMapping("/issue/{memberId}/{bookId}")   //working
+		public void issueBook( @PathVariable Integer memberId,@PathVariable Integer bookId)
 		{
+		  System.out.println(memberId+"*******"+bookId);
+		  IssueBook issue1=new IssueBook(bookId, memberId);
 		    System.out.println("in issue book ****");
-			labService.issueBook(issuebook);
+			labService.issueBook(issue1);
 			
 		}
 	  

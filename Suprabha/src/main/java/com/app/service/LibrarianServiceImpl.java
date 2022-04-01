@@ -163,7 +163,7 @@ public void renewBook(Integer bookId, Integer memberId) {
 	{
 		throw new RecordNotFound("no member with given Id"+memberId);
 	}
-	int noOftimeRenew =bmdao.findByBookIdAndMemberId(bookId,memberId).getNumOfTimesRenewed();
+	int noOftimeRenew =bmdao.findByBookIdAndMemberId(bookId,memberId).get(0).getNumOfTimesRenewed();
 	if(noOftimeRenew==Constants.MAX_RENEWAL)
 	{
 		throw new DependanceyException("this book has been renewed by max no of times");
@@ -175,8 +175,9 @@ public void renewBook(Integer bookId, Integer memberId) {
 			throw new DependanceyException("User has been charged fine. Please pay and renew books");
 		}else
 		{
-			BookIdMemberMapping bmmapping =
+			List<BookIdMemberMapping> bmmapping1 =
 					bmdao.findByBookIdAndMemberId(bookId,memberId);
+			BookIdMemberMapping bmmapping=bmmapping1.get(0);
 			int noOfRenew=bmmapping.getNumOfTimesRenewed();
 			bmmapping.setNumOfTimesRenewed(noOfRenew++);
 			

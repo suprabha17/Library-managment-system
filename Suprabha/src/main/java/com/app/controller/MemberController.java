@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ import com.app.pojo.BookIdMemberMapping;
 import com.app.pojo.User;
 import com.app.service.LibrarianServiceImpl;
 import com.app.service.MemberServiceImpl;
-
+@CrossOrigin("http:localhost:3001")
 @RestController
 @RequestMapping("/member")
 public class MemberController {
@@ -40,9 +41,9 @@ public class MemberController {
 	}
 	
 	
-	 @GetMapping("/author/{author}")  //working
+	 @PostMapping("/author")  //working
 	   
-	  public ResponseEntity<?> serchByAuthor(@PathVariable String author)
+	  public ResponseEntity<?> serchByAuthor(@RequestBody String author)
 		{
 		  System.out.println("in serch author ");
 			try {
@@ -55,9 +56,9 @@ public class MemberController {
 		
 		}
 	
-	  @GetMapping("/title/{title}")//working
+	  @PostMapping("/title")//working
 	   
-	  public ResponseEntity<?> serchByTitle(@PathVariable String title)
+	  public ResponseEntity<?> serchByTitle(@RequestBody String title)
 		{
 		  System.out.println("in search title");
 			try {
@@ -82,6 +83,19 @@ public class MemberController {
 				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
 			}
 		
+		}
+	  @PutMapping("/renew/{memberId}/{bookId}")   //working
+		public ResponseEntity<?> renewBook( @PathVariable Integer memberId,@PathVariable Integer bookId)
+		{
+		  System.out.println("in renew");
+			try {
+			
+			return new ResponseEntity<>(mservice.renewBook(bookId, memberId), HttpStatus.OK);
+			}catch(CustomRuntimeException e)
+			{
+				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+			}
+			
 		}
 	  
 	  @PostMapping("/issue")   //working
@@ -128,13 +142,30 @@ public class MemberController {
 		}
 	
 	
-	@GetMapping("login")
+	@GetMapping("/availableBooks")
+	
+	   
+	  public ResponseEntity<?> availableBooks()  
+		{
+		  System.out.println("in member all books method");
+			try {
+			
+			return new ResponseEntity<>(mservice.availableBook(), HttpStatus.OK);
+			}catch(CustomRuntimeException e)
+			{
+				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+			}
+		
+		}
+	
+	@PostMapping("/login")
 	public ResponseEntity<?> userValidation(@RequestBody Login details)
 	{
 	  System.out.println("in member login");
 		try {
 		
 		return new ResponseEntity<>(mservice.validateUser(details), HttpStatus.OK);
+		
 		}catch(CustomRuntimeException e)
 		{
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	

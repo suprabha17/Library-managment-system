@@ -32,7 +32,7 @@ public interface ILibrarianService {
      List<BookIdMemberMapping> getAllissueBook();//added
       List<BookIdMemberMapping> getAllissueBookForReservation();
 	List<BookIdMemberMapping> getIssueBookOfMemebr(Integer memberId);
-
+     
 	
      
      
