@@ -1,6 +1,6 @@
 package com.app.pojo;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import com.app.Enums.Roles;
@@ -34,11 +33,11 @@ public class User  {
 
     @Column(name = "created_at")
     @UpdateTimestamp
-    private Date createdAt;
+    private LocalDate createdAt;
 
     @Column(name = "updated_at")
     @LastModifiedDate
-    private Date updatedAt;
+    private LocalDate updatedAt;
 
     @Column(name = "fine",length = 30)
     private Float fine;
@@ -55,7 +54,7 @@ public class User  {
     @Column(name="address",length = 30)
     private String address;
 
-	public User(Integer id, String name, Date createdAt, Date updatedAt, Float fine, Integer numOfBooksPresent,
+	public User(Integer id, String name, LocalDate createdAt, LocalDate updatedAt, Float fine, Integer numOfBooksPresent,
 			String email, String password, String address,Roles role) {
 		super();
 		this.id = id;
@@ -90,19 +89,19 @@ public class User  {
 		this.name = name;
 	}
 
-	public Date getCreatedAt() {
+	public LocalDate getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(LocalDate createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	public Date getUpdatedAt() {
+	public LocalDate getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
+	public void setUpdatedAt(LocalDate updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 

@@ -47,9 +47,10 @@ public class LibrarianServiceImpl implements ILibrarianService
    
 @Override
 public Book addBooks(BookDto bookDtoList) {
+	
 		
 	return bdao.save(new Book(bookDtoList.getTitle(),
-			bookDtoList.getauthor(),bookDtoList.getAvailabilityCount()));
+			bookDtoList.getauthor(),1));
 		
 	
 }
@@ -87,21 +88,14 @@ public Book getBookById(Integer bookId) {
 }
 
 @Override
-public void updateBookQty(Integer bookId, Integer qty) 
+public Book updateBook(Book book1) 
 {
-	Optional<Book> optionalBook=bdao.findById(bookId);
-	if(optionalBook.isPresent())
-	{
-		Book book=optionalBook.get();
-		Integer avlCount=book.getAvailabilityCount();
-		avlCount+=qty;
-		book.setAvailabilityCount(avlCount);
-		bdao.save(book);
-	}
-	else
-	{
-		throw new RecordNotFound("Book not available");
-	}
+//	Book b=new Book();
+//	b.setTitle(book1.getTitle());
+//	b.setAvailabilityCount(book1.getAvailabilityCount());
+//	b.setauthor(book1.getauthor());
+//	
+	return bdao.save(book1);
 	
 }
 
@@ -116,16 +110,16 @@ public void issueBook(IssueBook issubook) {
             	
                
                 System.out.println("in issue boook section****");
-       	if(member.getNumOfBooksPresent()>4)
-    	{
-    		throw new DependanceyException("Max books already issued .");
-    	}else if(member.getFine()!=0)
-    	{
-    		System.out.println(member.getFine()+"-----fine");
-    		throw new DependanceyException("Fine is not cleared yet");
-    	}else
-    	{
-    		int numberOfBookPresent=member.getNumOfBooksPresent();
+//       	if(member.getNumOfBooksPresent()>4)
+//    	{
+//    		throw new DependanceyException("Max books already issued .");
+//    	}else if(member.getFine()!=0)
+//    	{
+//    		System.out.println(member.getFine()+"-----fine");
+//    		throw new DependanceyException("Fine is not cleared yet");
+//    	}else
+//    	{
+    		Integer numberOfBookPresent=member.getNumOfBooksPresent();
     		numberOfBookPresent +=numberOfBookPresent;
     		member.setNumOfBooksPresent(numberOfBookPresent);
     		
@@ -147,7 +141,7 @@ public void issueBook(IssueBook issubook) {
     		mdao.save(member);
     		
     		
-    	}
+//    	}
 	
 	
 }
@@ -163,7 +157,7 @@ public void renewBook(Integer bookId, Integer memberId) {
 	{
 		throw new RecordNotFound("no member with given Id"+memberId);
 	}
-	int noOftimeRenew =bmdao.findByBookIdAndMemberId(bookId,memberId).getNumOfTimesRenewed();
+	int noOftimeRenew =bmdao.findByBookIdAndMemberId(bookId,memberId).get(0).getNumOfTimesRenewed();
 	if(noOftimeRenew==Constants.MAX_RENEWAL)
 	{
 		throw new DependanceyException("this book has been renewed by max no of times");
@@ -175,8 +169,9 @@ public void renewBook(Integer bookId, Integer memberId) {
 			throw new DependanceyException("User has been charged fine. Please pay and renew books");
 		}else
 		{
-			BookIdMemberMapping bmmapping =
+			List<BookIdMemberMapping> bmmapping1 =
 					bmdao.findByBookIdAndMemberId(bookId,memberId);
+			BookIdMemberMapping bmmapping=bmmapping1.get(0);
 			int noOfRenew=bmmapping.getNumOfTimesRenewed();
 			bmmapping.setNumOfTimesRenewed(noOfRenew++);
 			
@@ -195,15 +190,12 @@ public void renewBook(Integer bookId, Integer memberId) {
 
 @Override
 public String delete(Integer memberId) {
-	List<BookIdMemberMapping> issuemeber=bmdao.findByMemberId(memberId);
+	
 	     
-	         if(issuemeber.get(0).getReturnDate()!=null)
-	         {
+	         
 	        	 mdao.deleteById(memberId);
 	        	 return "deleted successfuly";
-	         }
-	         else
-	        	 throw new DependanceyException("cannot remove this member because he/she have book to return");
+	        
 }
 
 @Override
@@ -222,6 +214,7 @@ public Book findByTitle(String title) {
 @Override
 public String returnBook(Integer issueId) {
 	
+	System.out.println(issueId+"*********");
 	BookIdMemberMapping issuedBook= bmdao.findById(issueId).orElseThrow(()->new RecordNotFound("this book is not issued"));
 	
 	          User member=mdao.findById(issuedBook.getMemberId()).orElseThrow(()->new RecordNotFound("this book is not issued"));
@@ -250,19 +243,15 @@ public String updateMemberFine(Integer issueId)
 	float amount =10;
 	BookIdMemberMapping issueBook=bmdao.findById(issueId).orElseThrow(()->new RecordNotFound("book not found"));
     User member=mdao.findById(issueBook.getMemberId()).orElseThrow(()->new RecordNotFound("member not found"));
-   if(issueBook.getExpectedReturn().isBefore(LocalDate.now()))
-   {
+   
 	   float amt=issueBook.getFineOnBook();
+	   float amt1=member.getFine();
 	   issueBook.setFineOnBook(amount+amt);
-	   member.setFine(amount+amt);
+	   member.setFine(amount+amt1);
 	    bmdao.save(issueBook);
+	    mdao.save(member);
 	    return "fine updated";
-   }
-   else
-   {
-	   
-	  return "not fine on it";
-   }
+   
 }
 //*******************************
 @Override
@@ -318,6 +307,12 @@ public List<BookIdMemberMapping> getAllissueBookForReservation() {
 	       }
 		return allIssue;
 	
+}
+
+@Override
+public User getByMemberId(Integer memberId) {
+
+	return mdao.findById(memberId).orElseThrow(()->new RecordNotFound("member not found"));
 }
 
 

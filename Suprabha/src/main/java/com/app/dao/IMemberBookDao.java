@@ -10,7 +10,7 @@ import com.app.pojo.BookIdMemberMapping;
 public interface IMemberBookDao extends JpaRepository<BookIdMemberMapping,Integer>{
 	BookIdMemberMapping findByBookId(Integer bookId);
        List<BookIdMemberMapping> findByMemberId(Integer memberId);
-       BookIdMemberMapping findByBookIdAndMemberId(Integer bookId,Integer memberId);
+       List<BookIdMemberMapping> findByBookIdAndMemberId(Integer bookId,Integer memberId);
 	List<BookIdMemberMapping> findByreturnDate(LocalDate now);
 	List<BookIdMemberMapping> findByExpectedReturn(LocalDate now);
 }

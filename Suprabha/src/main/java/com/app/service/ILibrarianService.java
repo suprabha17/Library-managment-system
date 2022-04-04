@@ -17,7 +17,7 @@ public interface ILibrarianService {
 //     Book getBookById(int id);
      void deleteBook(Integer deletebook);  //added not working
      Book getBookById(Integer bookIds);          //added
-     void updateBookQty(Integer bookId,Integer qty);  //yes it is working
+     Book updateBook(Book book1);  //yes it is working
      //issue book
      void issueBook(IssueBook issubook);//added
      List<User> getAllMember();
@@ -33,6 +33,8 @@ public interface ILibrarianService {
       List<BookIdMemberMapping> getAllissueBookForReservation();
 	List<BookIdMemberMapping> getIssueBookOfMemebr(Integer memberId);
 
+	User getByMemberId(Integer memberId);
+     
 	
      
      
