@@ -15,7 +15,7 @@ import com.app.exception.CustomRuntimeException;
 import com.app.pojo.User;
 import com.app.service.LibrarianServiceImpl;
 import com.app.service.MemberServiceImpl;
-@CrossOrigin("http:localhost:3001")
+@CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping("/")
 public class IndexController {

@@ -41,9 +41,10 @@ public class MemberServiceImpl implements IMemberService {
 
 	@Override  
 	public User addMemberDetails(MemberDto memberdto) {
+		float fine=0;
 		User user=new User();
-		user.setNumOfBooksPresent(Constants.INITIAL_BOOK_OF_MEMBE);
-		user.setFine(Constants.INITIAL_FINE_FOR_MEMBER);
+		user.setNumOfBooksPresent(0);
+		user.setFine(fine);
 		user.setRole(Roles.MEMBER);
 		user.setName(memberdto.getName());
 		user.setEmail(memberdto.getEmail());
@@ -192,6 +193,30 @@ public class MemberServiceImpl implements IMemberService {
 		}
 		
 		return bookAvailable;
+	}
+
+
+
+
+	@Override
+	public User updateUser(User user) {
+		return mdao.save(user);
+		
+	}
+
+
+
+
+	@Override
+	public List<BookIdMemberMapping> bookForReturn() {
+		List<BookIdMemberMapping> issue=bmdao.findAll();
+		List<BookIdMemberMapping> returnBook=new ArrayList<BookIdMemberMapping>();
+		for(BookIdMemberMapping r: issue)
+		{
+			if(r.getReturnDate()==null)
+				returnBook.add(r);
+		}
+		return returnBook;
 	}
 	
 	

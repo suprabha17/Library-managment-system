@@ -22,7 +22,7 @@ import com.app.pojo.BookIdMemberMapping;
 import com.app.pojo.User;
 import com.app.service.LibrarianServiceImpl;
 import com.app.service.MemberServiceImpl;
-@CrossOrigin("http:localhost:3001")
+@CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping("/member")
 public class MemberController {
@@ -188,7 +188,19 @@ public class MemberController {
 	
 	}
 	
+	@GetMapping("/returnBook")
+	public ResponseEntity<?> returnBook()
+	{
+	  System.out.println("return book");
+		try {
+		
+		return new ResponseEntity<>(mservice.bookForReturn(), HttpStatus.OK);
+		}catch(CustomRuntimeException e)
+		{
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+		}
 	
+	}
 	
 	
 }

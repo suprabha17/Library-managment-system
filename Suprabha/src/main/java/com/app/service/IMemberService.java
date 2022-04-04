@@ -5,6 +5,7 @@ import java.util.List;
 import com.app.dto.Login;
 import com.app.dto.MemberDto;
 import com.app.pojo.Book;
+import com.app.pojo.BookIdMemberMapping;
 import com.app.pojo.User;
 
 public interface IMemberService {
@@ -18,4 +19,6 @@ public interface IMemberService {
     User validateUser(Login details);
     void bookReserve(int memberId,int bookId);
     List<Book> availableBook(); 
+    User updateUser(User user);
+    List<BookIdMemberMapping> bookForReturn();
 }
