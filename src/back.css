@@ -1,0 +1,6 @@
+div {
+    /* Background pattern from Toptal Subtle Patterns */
+    background-image: url("./background.jpg");
+    height: 400px;
+    width: 100%;
+ }

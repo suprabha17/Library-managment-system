@@ -1,0 +1,19 @@
+.whole-page{
+    background-image: url('./background.jpg');
+    position: absolute;
+    background-repeat: 'no-repeat';
+    background-size: cover;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  
+}
+.container{
+    background-position: center;
+}
+.table{
+    border: black;
+    margin-top: 500px;
+}
