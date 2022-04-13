@@ -120,9 +120,9 @@ public void issueBook(IssueBook issubook) {
 //    	}else
 //    	{
     		Integer numberOfBookPresent=member.getNumOfBooksPresent();
-    		numberOfBookPresent +=numberOfBookPresent;
+    		numberOfBookPresent +=1;
     		member.setNumOfBooksPresent(numberOfBookPresent);
-    		
+    		System.out.println(member.getNumOfBooksPresent()+"***********");
     		Integer qty=book.getAvailabilityCount();
     		qty-=qty;
     		book.setAvailabilityCount(qty);
@@ -160,6 +160,7 @@ public void renewBook(Integer bookId, Integer memberId) {
 	int noOftimeRenew =bmdao.findByBookIdAndMemberId(bookId,memberId).get(0).getNumOfTimesRenewed();
 	if(noOftimeRenew==Constants.MAX_RENEWAL)
 	{
+		System.out.println(noOftimeRenew);
 		throw new DependanceyException("this book has been renewed by max no of times");
 	}else
 	{
@@ -174,8 +175,8 @@ public void renewBook(Integer bookId, Integer memberId) {
 			BookIdMemberMapping bmmapping=bmmapping1.get(0);
 			int noOfRenew=bmmapping.getNumOfTimesRenewed();
 			bmmapping.setNumOfTimesRenewed(noOfRenew++);
+			bmmapping.setExpectedReturn(LocalDate.now().plusDays(7));
 			
-			bmmapping.setReturnDate(LocalDate.now());
 			bmdao.save(bmmapping);
 			System.out.println("renewed successfuly");
 		}
@@ -228,7 +229,7 @@ public String returnBook(Integer issueId) {
                 	        Book book  =bdao.findById(bookId).orElseThrow(()->new RecordNotFound("this book is not issued"));
                 	        book.setAvailabilityCount(book.getAvailabilityCount()+1);
                      int n= member.getNumOfBooksPresent();
-                     member.setNumOfBooksPresent(n--);
+                     member.setNumOfBooksPresent(n-1);
        	           bmdao.save(issuedBook);
        	           mdao.save(member);
        	           return "returned book successfuly";

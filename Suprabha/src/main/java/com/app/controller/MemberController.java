@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.dto.IssueBook;
 import com.app.dto.Login;
 import com.app.dto.MemberDto;
+import com.app.dto.UpdatePAss;
 import com.app.exception.CustomRuntimeException;
 import com.app.pojo.BookIdMemberMapping;
 import com.app.pojo.User;
@@ -165,6 +166,22 @@ public class MemberController {
 		try {
 		
 		return new ResponseEntity<>(mservice.validateUser(details), HttpStatus.OK);
+		
+		}catch(CustomRuntimeException e)
+		{
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+		}
+	
+	}
+	
+	
+	@PutMapping("/reset")
+	public ResponseEntity<?> resetPassword(@RequestBody UpdatePAss details)
+	{
+	  System.out.println("reset passwod");
+		try {
+		  
+		return new ResponseEntity<>(mservice.updatePassword(details), HttpStatus.OK);
 		
 		}catch(CustomRuntimeException e)
 		{
