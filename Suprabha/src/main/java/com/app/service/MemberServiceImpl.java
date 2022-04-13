@@ -16,6 +16,7 @@ import com.app.dao.IMemberBookDao;
 import com.app.dao.IUserDao;
 import com.app.dto.Login;
 import com.app.dto.MemberDto;
+import com.app.dto.UpdatePAss;
 import com.app.exception.DependanceyException;
 import com.app.exception.RecordNotFound;
 import com.app.pojo.Book;
@@ -87,6 +88,7 @@ public class MemberServiceImpl implements IMemberService {
 				noOfRenew+=1;
 				bmmapping.setNumOfTimesRenewed(noOfRenew);
 				bmmapping.setRenewedAt(LocalDate.now());
+				bmmapping.setExpectedReturn(LocalDate.now().plusDays(7));
 				bmdao.save(bmmapping);	
 				System.out.println("renewed successfuly");
 				return "renewved successfully";
@@ -114,13 +116,7 @@ public class MemberServiceImpl implements IMemberService {
 	}
 
 
-	@Override   
-	public void updatePassword(String email, String pass) {
-		
-		            List<User> member=mdao.findByEmail(email);
-		            member.get(0).setPassword(pass);
-		            mdao.save(member.get(0));
-	}
+	
 
 
 	@Override
@@ -149,7 +145,27 @@ public class MemberServiceImpl implements IMemberService {
 		return  manager.createQuery(jpql,Book.class).getResultList();
 		
 	}
-
+	
+	
+	@Override   
+	public User updatePassword(UpdatePAss details) {
+		System.out.println(details.getEmail());
+		System.out.println(details.getOldpassword());
+		System.out.println(details.getNewPassword());
+		 User mem=mdao.findByEmailAndPassword(details.getEmail(),details.getOldpassword()).get(0);
+		
+		if(mem!=null)
+		{
+			mem.setPassword(details.getNewPassword());
+			mdao.save(mem);
+			return mem; 
+		}
+		else
+			return null;
+			
+			
+		           
+	}
 
 	@Override
 	public User validateUser(Login details)

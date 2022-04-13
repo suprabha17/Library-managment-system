@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.app.dto.Login;
 import com.app.dto.MemberDto;
+import com.app.dto.UpdatePAss;
 import com.app.pojo.Book;
 import com.app.pojo.BookIdMemberMapping;
 import com.app.pojo.User;
@@ -13,7 +14,7 @@ public interface IMemberService {
    
     String renewBook(Integer bookId,Integer memberId);
     void updateMemberAdd(Integer Id,String add);
-    void updatePassword(String email,String pass);
+    User updatePassword(UpdatePAss details);
     String fineToPay(Integer issueId);
     List<Book> allBooks();
     User validateUser(Login details);
